@@ -1,4 +1,5 @@
 """Small read-only fixture. Real systems need resource authorization in handlers."""
+
 from dataclasses import dataclass
 from typing import Any, Callable
 
@@ -7,6 +8,12 @@ from typing import Any, Callable
 class Tool:
     handler: Callable[[dict[str, Any]], Any]
     allowed: bool = True
+    description: str = ""
+    parameters: dict[str, Any] | None = None
+    timeout_seconds: float | None = None
+    requires_approval: bool = False
+    side_effecting: bool = False
+    require_idempotency_key: bool = False
 
 
 DOCUMENTS = [
@@ -27,4 +34,15 @@ def search(arguments: dict[str, Any]) -> dict[str, Any]:
 
 
 def default_tools() -> dict[str, Tool]:
-    return {"search": Tool(search)}
+    return {
+        "search": Tool(
+            search,
+            description="Search the local teaching documents by Chinese substring.",
+            parameters={
+                "type": "object",
+                "properties": {"query": {"type": "string"}},
+                "required": ["query"],
+                "additionalProperties": False,
+            },
+        )
+    }

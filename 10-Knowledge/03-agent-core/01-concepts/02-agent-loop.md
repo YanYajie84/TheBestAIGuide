@@ -47,6 +47,6 @@ $$C=\sum_{t=1}^{T}(p_i I_t+p_o O_t+q_t).$$
 
 ## 追踪什么，不追踪什么
 
-JSONL Trace 每行记录一个 `run_id/seq/kind/data` 事件。把 `tool_call` 与 `tool_result` 用调用ID连接，能定位“选错工具”“参数错了”；判断“工具正确但答案错了”还需结合返回的 `state.answer`，本例 Trace 的 `run_finished` 只保存状态、原因和步数，不含最终答案。记录动作依据的简短摘要可以帮助诊断，但无需持久化模型的隐藏思维过程。本实现收集事件后落盘，因此不是崩溃后恢复日志；持久恢复见 [State](../../07-state-and-memory/01-concepts/01-state-and-checkpoints.md)。
+JSONL Trace 每行记录一个 `run_id/seq/kind/data` 事件。`model_decision`记录动作类型与usage，`tool_call`和`tool_result`用调用ID连接，并附工具耗时；判断“工具正确但答案错了”仍需结合返回的`state.answer`。Trace不保存完整异常和最终答案，避免默认扩大敏感信息范围。记录动作依据的简短摘要可以帮助诊断，但无需持久化模型的隐藏思维过程。本实现结束时才落Trace；`checkpoint.py`可保存结构化状态，但仍不是逐事件崩溃恢复日志。完整持久恢复见 [State](../../07-state-and-memory/01-concepts/01-state-and-checkpoints.md)。
 
 运行 [Notebook](../04-labs/01-agent-loop.ipynb) 比较完成、重复循环和步数耗尽三条路径，再修改参数验证你是否能预测停止原因。参考：[ReAct](https://arxiv.org/abs/2210.03629)。

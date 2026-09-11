@@ -1,6 +1,6 @@
 # Agent Loop 实验
 
-> 状态：verified | 验证范围：本地规则策略、工具返回、重复停止和预算停止
+> 状态：verified | 2026-09-11在Windows标准Jupyter内核重新执行；验证范围：本地规则策略、工具返回、重复停止和预算停止
 
 打开[01-agent-loop.ipynb](01-agent-loop.ipynb)，顺序执行。实验导入[完整源码工程](../05-code/agent-loop-python/README.md)，无模型API和网络依赖。Notebook展示的“完成”只证明控制流程满足规则，不代表真实LLM任务成功率。
 

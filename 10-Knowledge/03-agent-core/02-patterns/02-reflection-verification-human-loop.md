@@ -33,6 +33,8 @@ def check_citations(answer, documents):
 
 预算可以写成最多 $R$ 次修订：总尝试次数为 $R+1$。例如 $R=1$ 表示初稿一次、修订一次，不能让每个验证失败都重新生成一个新的“最多一次”计数器。计数必须属于任务状态，跨恢复保留。
 
+[verification.py](../05-code/agent-loop-python/src/agent_loop/verification.py)实现了这个最小契约：`generate(feedback)`生成候选，`verify(candidate)`返回带`passed`字段的具体验收结果，`max_revisions`限制全局修订次数。它只负责有界控制，不声称验证器一定正确。
+
 ## 人工介入应该给出可判断的对象
 
 对于只读搜索，已有任务授权通常足够。若下一步是覆盖用户的正式报告，界面应展示目标文件、差异和影响，再等待明确决定。等待时保存 `waiting_for_input` 状态和决策ID，恢复时核对批准的对象仍与当前对象一致。不要只保存“用户同意了”而忘记同意的是哪份内容。

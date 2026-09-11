@@ -1,4 +1,5 @@
 """Write a fresh JSONL trace per run; no hidden model reasoning is required."""
+
 import json
 from pathlib import Path
 

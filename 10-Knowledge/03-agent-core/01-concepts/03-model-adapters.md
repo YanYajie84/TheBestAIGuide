@@ -38,7 +38,9 @@ class MyModelAdapter:
         raise ValueError("unsupported action")
 ```
 
-这段是适配边界示例，不是某家API的完整调用器。真实连接还要绑定模型ID、参数、工具格式、超时、拒绝状态和usage；这些应以对应版本官方SDK为准。缺字段时这里会抛异常，由 Loop 归入 `invalid_model_output`；它没有实现自动修复。你可以先用 [ScriptedModel](../05-code/agent-loop-python/src/agent_loop/models.py) 输入错误动作，确认运行时如何处理，再接真实模型，避免把控制问题和模型问题混在一起。
+这段展示适配边界。仓库现提供可运行的[OpenAI-compatible Chat Completions适配器](../05-code/agent-loop-python/src/agent_loop/adapters.py)：它发送消息和函数工具Schema，将单个`tool_calls`或最终文本转换为Action，并把usage带回运行时。其离线测试使用注入transport，不调用付费API。
+
+该协议允许模型返回一个或多个工具调用；教学Loop显式拒绝并行调用，而不是静默丢弃。OpenAI官方文档还说明较新的模型可使用`developer`消息承载开发者指令；本适配器为了兼容更多第三方服务保留`system`消息。连接具体服务时仍要按其文档确认模型ID、角色支持、超时、拒绝状态和usage字段。[OpenAI Chat Completions API参考](https://developers.openai.com/api/reference/cli/resources/chat)
 
 接着读 [workbench 的 providers.py](../../../20-Projects/learning-workbench/src/learning_workbench/providers.py)：`LocalChat` 执行本地模型，`ActionModel` 将响应解析为本章 Action；`ChatAPI` 提供可选远程接口。仓库已保存 [12 条教学任务的真实本地模型结果](../../../20-Projects/learning-workbench/artifacts/real-models/agent-comparison.json)。结果分别统计工具选择、流程完成和答案匹配，三项不能互相代替。远程 API 传输契约测试不等于付费模型质量验证，运行方式及边界见[项目说明](../../../20-Projects/learning-workbench/README.md)。
 
