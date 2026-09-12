@@ -15,7 +15,7 @@
 | [委托授权](01-concepts/05-delegated-authorization.md) | 谁允许访问什么 | Runtime主体/scope检查 |
 | [执行层模式](02-patterns/01-tool-runtime.md) | 参数错、超时、取消和重复如何处理 | [TS Runtime](05-code/tool-runtime-typescript/README.md) |
 
-[实验Notebook](04-labs/01-tool-contracts-and-errors.ipynb)串起Schema验证与TS故障测试，并在 Windows 上显式使用 UTF-8 与解析后的 Node/npm 路径。MCP当前规范为2026-07-28；可运行示例固定SDK 1.29.0，明确演示旧协议兼容路线，升级差异在正文单独说明。[来源表](references.md)记录核验入口。
+[实验Notebook](04-labs/01-tool-contracts-and-errors.ipynb)串起Schema验证与TS故障测试，并在 Windows 上显式使用 UTF-8 与解析后的 Node/npm 路径。MCP当前规范为2026-07-28；可运行示例固定拆分后的TypeScript SDK 2.0.0，真实stdio客户端用自动协商并断言当前协议版本，同时保留旧握手的内存兼容测试。[来源表](references.md)记录核验入口。
 
 ## 从学习机制到组合使用
 

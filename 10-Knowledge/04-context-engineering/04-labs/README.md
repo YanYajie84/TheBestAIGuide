@@ -7,8 +7,9 @@
 | --- | --- | --- |
 | [预算打包](01-token-budget.ipynb) | 读前权限、硬约束及输出/协议/工具预算 | 360 字节头截断漏证据；297 字节打包保留目标/约束/证据，跨租户正文未加载 |
 | [结构化压缩](02-context-compaction.ipynb) | 失败不能变成功，约束不能被观察覆盖，事实带来源 | 原始 5759 字节 → 297 字节；已标注字段 3/3 保留，截断基线仅 1/3 |
+| [开放文本压缩评测协议](03-open-text-compaction-eval.md) | 否定、数字、条件、来源、幻觉和间接注入如何评测 | 设计稿；尚未运行模型，不报告质量分数 |
 
-输入全是人工构造教学事件。默认计数器每 UTF-8 字节算一个教学 token，不是任何商用模型的 tokenizer；代码允许注入真实计数函数。没有调用模型，没有测试 Context Rot 或开放式摘要质量。
+输入全是人工构造教学事件。默认计数器每 UTF-8 字节算一个教学 token，不是任何商用模型的 tokenizer；代码允许注入真实计数函数。两本 Notebook 没有调用模型，没有测试 Context Rot 或开放式摘要质量；第三份文档给出真实模型评测协议，但当前状态仍是 `design`。
 
 [Python 参考包](../05-code/context-builder-python/README.md)是正式实现与测试入口；[context_lab.py](context_lab.py)只为旧链接保留兼容包装。正文对应 [Context Builder](../02-patterns/01-context-builder.md)、[优化策略](../02-patterns/02-optimization-strategies.md)和[安全边界](../03-security-provenance/README.md)。所有 Notebook 均保存中间量、检查、对照和局限。
 

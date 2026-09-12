@@ -1,7 +1,7 @@
 # Context Engineering 资源索引
 
 > 状态：draft
-> 最近整理：2026-09-03
+> 最近整理：2026-09-12
 > 用途：记录来源类型、支持的结论和使用边界；正式知识见 [Context Engineering](README.md)。
 
 ## 核心一手资料
@@ -10,7 +10,7 @@
 | --- | --- | --- | --- |
 | [Anthropic: Effective context engineering for AI agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents) | 官方工程文章，2025-09-29 | 有效上下文、检索、长任务、压缩和子 Agent | 厂商经验，需要在自身模型与任务上验证 |
 | [Anthropic: Building effective agents](https://www.anthropic.com/engineering/building-effective-agents) | 官方工程文章，2024-12-19 | Workflow/Agent 边界、简单组合模式 | 主要描述 Anthropic 实践，不是协议标准 |
-| [LangChain: Context engineering for agents](https://blog.langchain.com/context-engineering-for-agents/) | 框架作者文章 | Write、Select、Compress、Isolate 分类 | 分类可复用，示例 API 可能随框架变化 |
+| [LangChain: Context engineering for agents](https://www.langchain.com/blog/context-engineering-for-agents) | 框架作者文章，2025-07-02 | Write、Select、Compress、Isolate 分类 | 分类可复用，示例 API 可能随框架变化 |
 | [langchain-ai/how_to_fix_your_context](https://github.com/langchain-ai/how_to_fix_your_context) | 官方配套代码 | RAG、工具筛选、隔离、修剪、摘要、卸载示例 | 运行前锁定依赖并检查当前 API |
 | [Lost in the Middle](https://arxiv.org/abs/2307.03172) | 论文 | 长上下文中信息位置与利用问题 | 结论受模型、任务和上下文长度约束 |
 | [A Survey of Context Engineering for Large Language Models](https://arxiv.org/abs/2507.13334) | 综述论文 | 术语、方法分类和研究全景 | 综述覆盖广，具体结论需回到原论文 |
@@ -66,8 +66,8 @@
 - 博客中的模式可进入 `draft`，进入 `reviewed` 前需要交叉核对。
 - 本地实验结果进入 Labs，并记录数据、版本、运行命令和原始输出。
 
-## 2026-09-06 核验与本仓实验
+## 2026-09-12 核验与本仓实验
 
-本次打开核对 Anthropic Effective Context 正文与 [Lost in the Middle v3](https://arxiv.org/abs/2307.03172v3)。前者支撑长任务压缩/状态卸载的工程动机，后者支撑特定模型任务中的位置效应；两者不为本仓未运行的模型质量提供分数。失败模式表是工程排障分类，并非固定六种的通用标准。
+本次重新打开核对 Anthropic Effective Context 正文、LangChain 分类文章与 [Lost in the Middle v3](https://arxiv.org/abs/2307.03172v3)。前两者支撑选择、压缩、隔离和状态卸载的工程分类与动机，属于厂商/框架实践；论文支撑特定模型和任务中的位置效应，不等于所有长上下文模型都会以同样幅度退化。三者都不能为本仓未运行的模型质量提供分数。失败模式表是工程排障分类，并非固定六种的通用标准。
 
-[两本实验](04-labs/README.md)的计数、打包、结构化抽取、数据和结果均为本仓原创教学验证。其他历史来源保留为延伸阅读，本次不声称逐条重新核验。
+[两本可执行实验](04-labs/README.md)的计数、打包、结构化抽取、数据和结果均为本仓原创教学验证；[开放文本压缩评测协议](04-labs/03-open-text-compaction-eval.md)仍是未运行的设计稿。其他历史来源保留为延伸阅读，本次不声称逐条重新核验。

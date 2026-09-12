@@ -44,15 +44,19 @@ state:
   open_items: []
 candidates:
   - id: "repo:payment/webhook.py"
+    tenant: "payments"
     kind: "workspace_file"
     trust: "workspace"
     version: "git:abc123"
-    content: "..."
+    content_ref: "workspace://payment/webhook.py"
+    sensitive: false
   - id: "trace:run-042"
+    tenant: "payments"
     kind: "tool_result"
     trust: "runtime"
     observed_at: "2026-09-03T10:20:00+08:00"
-    content: "..."
+    content_ref: "trace-store://run-042"
+    sensitive: true
 tools:
   - name: "run_tests"
     permission: "read_execute"
@@ -61,6 +65,8 @@ budget:
 ```
 
 数值只是 Schema 示例，不是推荐预算。
+
+`content_ref` 是受控加载器可解析的引用，不是让模型自行访问的 URL。构建器先根据主体、租户、敏感度、用途和有效期判断能否读取，再由加载器取回正文；若候选一开始就内嵌 `content`，所谓“读前授权”已经失去意义。可信度也不等于访问权：一个来源可以可信，但当前主体仍可能无权读取。
 
 ## 构建流水线
 
@@ -210,10 +216,10 @@ Context Builder 至少需要覆盖：
 可用证据预算并不等于模型窗口长度：
 
 $$
-B_{evidence}=W-B_{output}-B_{protocol}-B_{mandatory}.
+B_{evidence}=W-B_{output}-B_{protocol}-B_{tools}-B_{mandatory}.
 $$
 
-$W$ 是窗口上限；三个扣除项依次是输出预留、消息模板/工具协议开销和目标/硬约束等必留输入。若教学窗口为 1000、输出预留 200、协议 50、必留 250，剩余证据预算为 500。实际供应商对推理 token、输出和窗口的计算口径要另行确认。
+$W$ 是窗口上限；四个扣除项依次是输出预留、消息模板/协议开销、工具定义与工具往返预留，以及目标/硬约束等必留输入。若教学窗口为 1000、输出预留 200、协议 50、工具 50、必留 200，剩余证据预算为 500。不要重复扣除：若供应商计数器已把工具 Schema 编入协议消息，应把它归入 `B_protocol`，并令 `B_tools` 只表示未来工具结果的预留。
 
 可选片段每个有成本 $t_i$ 和预估价值 $u_i$，选择 $x_i\in\{0,1\}$，可以写成预算约束问题：最大化 $\sum_i u_ix_i$，满足 $\sum_i t_ix_i\le B_{evidence}$。它是一个简化模型：片段会互相补充或重复，效用不一定可加。按 $u_i/t_i$ 贪心只是易解释的启发式，并非一般情况下的最优解。
 
@@ -221,6 +227,21 @@ $W$ 是窗口上限；三个扣除项依次是输出预留、消息模板/工具
 
 [Python 参考实现](../05-code/context-builder-python/README.md)使用“元数据引用 + 延迟正文加载器”，在读取正文前检查租户、信任、敏感度和有效期；之后执行必留检查、精确去重、事实冲突检测和预算打包，并把分隔符算入成本。预算不足容纳目标/约束/验收条件或必留候选时直接报错。测试还固定了跨租户正文从未被加载、必留项拥有重复内容、空集合指标不除零等边界。
 
-计数器可注入；实验默认字节 tokenizer，不能把输出数字当成 GPT/Claude 计费 token。`TokenizerCounter` 适配供应商 tokenizer，`ChatTemplateCounter` 用于对渲染后的消息和工具定义整体计数。上文构建流水线仍是完整架构伪代码；参考实现不包含语义排序、开放文本摘要、PII 脱敏或模型调用。
+计数器可注入；实验默认字节 tokenizer，不能把输出数字当成 GPT/Claude 计费 token。`TokenizerCounter` 适配供应商 tokenizer，`ChatTemplateCounter` 用于对渲染后的消息和工具定义整体计数。上文构建流水线仍是完整架构伪代码；参考实现只覆盖读前授权、必留检查、精确去重、结构化事实冲突、预算打包与来源记录，不包含语义排序、开放文本摘要、PII 脱敏或模型调用。
+
+## 接入真实 Tokenizer 与聊天模板
+
+不要只对拼接后的正文调用 tokenizer。供应商实际请求还可能编码角色标记、消息边界、工具 Schema、图片、缓存控制和其他协议字段；同一段文字在不同模型或模板下的计数也可能不同。生产接入应冻结并记录 `provider/model/tokenizer_version/chat_template_version`，对**最终序列化请求**计数：
+
+```python
+counter = TokenizerCounter(provider_tokenizer.encode)
+template_counter = ChatTemplateCounter(
+    render=render_complete_chat_request,
+    counter=counter,
+)
+estimated = template_counter.count(messages=messages, tools=tools)
+```
+
+这里的函数名是适配器示意，不代表各供应商存在同名 API。上线前用供应商返回的 usage 做校准样本，并为文本、工具调用、多模态输入、缓存命中和长输出分别测试；模型或聊天模板升级后重新校准。推理 Token、输出上限与上下文窗口是否共享同一额度，应以所用模型当期官方文档和真实 API 响应为准。
 
 安全规则和来源记录的解释见[安全边界与来源追踪](../03-security-provenance/README.md)。

@@ -1,6 +1,6 @@
 # Agent之间传什么：任务、状态和产物
 
-> 状态：draft | 来源核验：2026-09-07 | 配套实验固定 A2A 0.3.0 的本地子集，未声称完整协议一致性
+> 状态：draft | 来源核验：2026-09-12 | 配套实验固定 A2A 0.3.0 的本地子集，未声称完整协议一致性
 
 主Agent把“比较上下文压缩方法”交给研究Agent。对方可能要读多篇文章，中途需要补充限定范围，最后交付一张比较表。这比调用一个立即返回的`search`函数多了任务身份、持续状态、补充输入和产物版本的问题。
 
@@ -55,4 +55,6 @@ python scripts/run_python.py -m learning_workbench.a2a_demo
 
 输出的 Trace 可以看见请求和响应。重复消息返回同一任务，是这个演示的去重实现，不应推断所有 A2A 服务都有相同保证。两个工作者只回传输入文本，第二个虽叫 `reviewer` 也没有进行语义审核；实验验证消息交接与状态，不验证研究能力。Agent Card 中的 `skills` 是能力描述对象，也不是上一节所说的 `SKILL.md` 文件包。
 
-内部调度实践见[多Agent领域](../../08-planning-workflow-multi-agent/README.md)，交换格式见[共享Schema](../05-code/shared-schemas/README.md)。一手来源：[A2A 0.3.0规范](https://a2a-protocol.org/v0.3.0/specification/)、[任务生命周期](https://a2a-protocol.org/latest/topics/life-of-a-task/)。
+截至2026-09-12，官方公开稳定规范仍是0.3.0；Roadmap中的1.0是后续计划，不应提前当作已发布协议实现。文档引用固定到0.3.0，避免`latest`在未来自动指向不兼容字段。若要升级，先固定新版本，比较Agent Card、消息/任务、状态、产物、传输和认证差异，再用一致性测试验证；不能只改版本号。
+
+内部调度实践见[多Agent领域](../../08-planning-workflow-multi-agent/README.md)，交换格式见[共享Schema](../05-code/shared-schemas/README.md)。一手来源：[A2A 0.3.0规范](https://a2a-protocol.org/v0.3.0/specification/)、[0.3.0任务生命周期](https://a2a-protocol.org/v0.3.0/topics/life-of-a-task/)。

@@ -1,7 +1,7 @@
-// Fixed SDK v1.29.0 teaching example: protocol generation 2025-11-25.
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { z } from "zod";
+// Fixed SDK v2.0.0 teaching example: negotiates protocol generation 2026-07-28.
+import { McpServer } from "@modelcontextprotocol/server";
+import { serveStdio } from "@modelcontextprotocol/server/stdio";
+import * as z from "zod/v4";
 import { pathToFileURL } from "node:url";
 
 export function createServer(): McpServer {
@@ -12,8 +12,8 @@ export function createServer(): McpServer {
   ];
   server.registerTool("search_docs", {
     description: "在本地教学语料中按子串检索，返回文档ID和原文；无网络访问。",
-    inputSchema: { query: z.string().min(1).max(100) },
-    outputSchema: { documents: z.array(z.object({ id: z.string(), text: z.string() })) },
+    inputSchema: z.object({ query: z.string().min(1).max(100) }),
+    outputSchema: z.object({ documents: z.array(z.object({ id: z.string(), text: z.string() })) }),
   }, async ({ query }) => {
     // A whitespace query is syntactically valid but invalid for this operation.
     if (!query.trim()) return { isError: true, content: [{ type: "text", text: "query must contain non-whitespace characters" }] };
@@ -24,7 +24,6 @@ export function createServer(): McpServer {
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-  const server = createServer();
   // stdout carries JSON-RPC only. Diagnostic logs belong on stderr.
-  await server.connect(new StdioServerTransport());
+  void serveStdio(createServer);
 }

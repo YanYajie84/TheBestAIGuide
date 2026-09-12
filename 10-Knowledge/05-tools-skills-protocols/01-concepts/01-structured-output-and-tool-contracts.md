@@ -1,6 +1,6 @@
 # 工具契约：从“模型想调用”到“程序可以执行”
 
-> 状态：draft | 来源核验：2026-09-06
+> 状态：draft | 来源核验：2026-09-12
 
 模型生成 `search(query="上下文")` 并没有执行搜索。它只是提出一个动作；接下来，程序必须判断这个动作能否执行，执行后把结果交回模型。Function Calling 让模型表达动作，Tool Runtime 负责实际调用，两者之间靠契约连接。
 
@@ -42,3 +42,9 @@ JSON Schema 中写了 `properties`，并不自动要求这些字段存在；需�
 | `call_id` | 与请求关联，不能直接当成跨系统幂等保证 |
 
 运行 [契约Notebook](../04-labs/01-tool-contracts-and-errors.ipynb)，你会看到合法JSON为什么仍能被Schema拒绝。完整TS实现见 [Registry](../05-code/tool-runtime-typescript/src/registry.ts)，六种交换对象见 [共享Schema](../05-code/shared-schemas/README.md)。官方依据：[JSON Schema对象](https://json-schema.org/understanding-json-schema/reference/object)。
+
+## 输出通过 Schema，不代表内容可信
+
+工具可以返回结构完全合法的网页、邮件或文档文本，其中仍包含错误事实、恶意指令或敏感数据。输出 Schema 只证明字段形状，不证明文本有权改变系统策略，也不证明模型可以把它发给另一个工具。
+
+因此结果还要携带来源、获取时间、信任级别、敏感度和可回读引用；外部文本按数据处理。Runtime 在下一次动作前重新校验工具、主体、资源和参数，尤其防止“网页要求上传密钥”这类间接提示注入。内容安全、事实核验与 Schema 校验是三层不同问题。

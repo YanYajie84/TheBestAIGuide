@@ -1,6 +1,6 @@
 # 工具契约与错误实验
 
-> 状态：verified | 2026-09-12；范围：12个Schema正反例、47个边界反例、TS执行控制与真实MCP stdio调用
+> 状态：verified | 2026-09-12；范围：12个Schema正反例、47个边界反例、TS执行控制与MCP 2026-07-28真实stdio调用
 
 打开[Notebook](01-tool-contracts-and-errors.ipynb)。Python段需要`jsonschema`；TS段先分别在 [Tool Runtime](../05-code/tool-runtime-typescript/README.md) 和 [MCP Server/Client](../05-code/mcp-server-typescript/README.md) 工程执行`npm ci`。Notebook 的 Python 段展示 12 个基础正反例；TS 测试还会执行 47 个边界反例。Notebook 显式按 UTF-8 读文件与子进程输出，并通过系统路径解析 Node/npm，避免中文 Windows 的 GBK 与 `.cmd` 启动问题。实验不接模型、不查询真实企业资料，不把本地教学数据当作业务结果。
 
@@ -10,7 +10,7 @@
 python scripts/check_notebooks.py --execute 10-Knowledge/05-tools-skills-protocols/04-labs/01-tool-contracts-and-errors.ipynb
 ```
 
-先观察同一个空格查询：字符串 Schema 接受它，业务逻辑拒绝它；再观察 MCP `isError` 与正常返回空文档列表的区别。最后一个代码单元会启动真实 stdio 子进程，不能只看前面的 Python 校验就认为协议调用已跑通。
+先观察同一个空格查询：字符串 Schema 接受它，业务逻辑拒绝它；再观察 MCP `isError` 与正常返回空文档列表的区别。最后一个代码单元会启动SDK v2真实stdio子进程，并断言协商版本是`2026-07-28`；不能只看前面的Python校验就认为协议调用已跑通。
 
 ## 标准内核验证更新（2026-09-06）
 

@@ -35,6 +35,12 @@ description: 当用户要比较多种技术方案并需要逐条证据时，整�
 
 第三方Skill中的说明和脚本必须按来源审查。来自资料的文字不能重写宿主授权规则；脚本运行也需要明确的环境权限。这里的设计原则可与 [工具Runtime](../02-patterns/01-tool-runtime.md)组合：Skill指导怎么用工具，Runtime检查能不能用工具。格式依据：[Agent Skills官方规范](https://agentskills.io/specification)。
 
+## 把 Skill 当作供应链依赖
+
+安装或升级第三方 Skill 前，至少记录来源仓库、提交或发布版本、内容哈希和许可证；审查 `SKILL.md` 以及会实际执行的脚本、依赖和模板。依赖应锁版本，脚本在最小权限和可隔离环境中运行。`allowed-tools` 即使被宿主识别，也只是声明偏好或候选能力，不是授权边界；最终权限仍由宿主和 Runtime 决定。
+
+格式检查可用官方 `skills-ref validate` 作为一道门禁，但“格式合法”不等于代码安全或触发正确。升级后重跑应触发/不应触发/歧义/失败四组案例和脚本测试，保留上一版以便回滚。官方规范建议主说明保持精简、附属资源按需加载；若资源不断加深嵌套或必须全量读取，应重新拆分 Skill，而不是把渐进披露只写在文档里。
+
 ## 顺着一个包找到真正运行的部分
 
 打开教学包后，按 `SKILL.md → references/cases.json → scripts/compare.py → assets/comparison.md` 阅读：主说明定义何时使用；案例给触发、非触发、歧义和缺资料输入；脚本检查引用片段是否属于所给来源；模板固定表格列。`compare.py` 不会自己搜索网页，也不会证明引用支持主张，它只验证来源 ID 与片段位置并渲染结果。具体命令见 [workbench](../../../20-Projects/learning-workbench/README.md)。
