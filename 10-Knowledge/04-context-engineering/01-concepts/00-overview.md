@@ -35,8 +35,10 @@ Context Engineering 是为每一次模型调用选择、转换、排序和组织
 2. [Context Builder](../02-patterns/01-context-builder.md)：输入契约、构建流程、输出 Schema 和测试点。
 3. [失败模式](02-failure-modes.md)：八类现象，包括中毒、干扰、混淆、冲突、腐化、溢出、泄露和注入。
 4. [优化策略](../02-patterns/02-optimization-strategies.md)：选择、检索、压缩、隔离、卸载与缓存。
-5. [评测方法](03-context-evaluation.md)：任务集、指标、消融、Trace 和回归。
-6. [资源索引](../references.md)：论文、官方文章和工程资料。
+5. [安全边界与来源追踪](../03-security-provenance/README.md)：读前权限、冲突和派生内容回读。
+6. [评测方法](03-context-evaluation.md)：任务集、指标、消融、Trace 和回归。
+7. [Python 参考实现](../05-code/context-builder-python/README.md)：把确定性边界固化为测试。
+8. [资源索引](../references.md)：论文、官方文章和工程资料。
 
 ## 核心原则
 
@@ -59,7 +61,7 @@ Context Engineering 是为每一次模型调用选择、转换、排序和组织
   -> 将确认有效的策略固化为回归测试
 ```
 
-两个配套 Notebook 已实现预算打包和结构化压缩并保存实际输出，见 [Context Engineering Labs](../04-labs/README.md)。实验未调用模型，不能据此声称已验证模型层注意力退化或真实任务成功率。
+两个配套 Notebook 调用带测试的正式参考包，实现预算打包和结构化压缩并保存实际输出，见 [Context Engineering Labs](../04-labs/README.md)。实验未调用模型，不能据此声称已验证模型层注意力退化或真实任务成功率。
 
 ## 主要来源
 

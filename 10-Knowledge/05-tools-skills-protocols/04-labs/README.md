@@ -1,8 +1,8 @@
 # 工具契约与错误实验
 
-> 状态：verified | 范围：12个Schema正反例、TS执行控制与真实MCP stdio调用
+> 状态：verified | 2026-09-12；范围：12个Schema正反例、47个边界反例、TS执行控制与真实MCP stdio调用
 
-打开[Notebook](01-tool-contracts-and-errors.ipynb)。Python段需要`jsonschema`；TS段先分别在 [Tool Runtime](../05-code/tool-runtime-typescript/README.md) 和 [MCP Server/Client](../05-code/mcp-server-typescript/README.md) 工程执行`npm ci`。Notebook 的 Python 段展示 12 个基础正反例；TS 测试还会执行 47 个边界反例。实验不接模型、不查询真实企业资料，不把本地教学数据当作业务结果。
+打开[Notebook](01-tool-contracts-and-errors.ipynb)。Python段需要`jsonschema`；TS段先分别在 [Tool Runtime](../05-code/tool-runtime-typescript/README.md) 和 [MCP Server/Client](../05-code/mcp-server-typescript/README.md) 工程执行`npm ci`。Notebook 的 Python 段展示 12 个基础正反例；TS 测试还会执行 47 个边界反例。Notebook 显式按 UTF-8 读文件与子进程输出，并通过系统路径解析 Node/npm，避免中文 Windows 的 GBK 与 `.cmd` 启动问题。实验不接模型、不查询真实企业资料，不把本地教学数据当作业务结果。
 
 依赖与内核设置见[统一环境说明](../../../scripts/README.md)。完成上面两项 `npm ci` 后，从仓库根目录执行：
 

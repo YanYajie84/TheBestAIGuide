@@ -1,6 +1,6 @@
 # Tools、Skills与协议
 
-> 状态：draft | 来源核验：2026-09-06；配套离线执行与MCP stdio集成已实测
+> 状态：draft | 来源核验：2026-09-12；配套离线执行与MCP stdio集成已实测
 
 本域把“模型提出动作”连接到“程序执行动作”，再说明工作方法与跨系统通信怎样复用。
 
@@ -15,7 +15,7 @@
 | [委托授权](01-concepts/05-delegated-authorization.md) | 谁允许访问什么 | Runtime主体/scope检查 |
 | [执行层模式](02-patterns/01-tool-runtime.md) | 参数错、超时、取消和重复如何处理 | [TS Runtime](05-code/tool-runtime-typescript/README.md) |
 
-[实验Notebook](04-labs/01-tool-contracts-and-errors.ipynb)串起Schema验证与TS故障测试。MCP当前规范为2026-07-28；可运行示例固定SDK 1.29.0，明确演示旧协议兼容路线，升级差异在正文单独说明。[来源表](references.md)记录核验入口。
+[实验Notebook](04-labs/01-tool-contracts-and-errors.ipynb)串起Schema验证与TS故障测试，并在 Windows 上显式使用 UTF-8 与解析后的 Node/npm 路径。MCP当前规范为2026-07-28；可运行示例固定SDK 1.29.0，明确演示旧协议兼容路线，升级差异在正文单独说明。[来源表](references.md)记录核验入口。
 
 ## 从学习机制到组合使用
 

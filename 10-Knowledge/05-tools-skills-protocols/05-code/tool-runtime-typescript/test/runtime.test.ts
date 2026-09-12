@@ -91,3 +91,16 @@ test("the full ToolCall envelope is checked before any handler executes", async 
   assert.equal((await runtime.execute(good, identity)).ok, true);
   assert.equal(calls, 1);
 });
+
+test("malformed host identity is rejected without executing or throwing", async () => {
+  let calls = 0;
+  const runtime = setup(async () => ({ count: ++calls }));
+  const call = { call_id: "identity", name: "search", arguments: { query: "x" } };
+  for (const invalid of [null, {}, { subject: "", scopes: new Set() },
+                         { subject: "learner", scopes: ["docs:read"] },
+                         { subject: "learner", scopes: new Set([7]) }]) {
+    const result = await runtime.execute(call, invalid);
+    assert.equal(!result.ok && result.error.code, "invalid_identity");
+  }
+  assert.equal(calls, 0);
+});

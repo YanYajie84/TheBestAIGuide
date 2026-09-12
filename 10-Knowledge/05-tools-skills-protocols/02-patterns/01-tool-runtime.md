@@ -1,12 +1,13 @@
 # Tool Runtime：把失败限制在可处理的范围
 
-> 状态：draft | 来源核验：2026-09-06 | TS实现与故障测试已运行
+> 状态：draft | 来源核验：2026-09-12 | TS实现与故障测试已运行
 
 一个真正可用的工具执行层不仅要`await handler(args)`。它还要在执行前拒绝不合法动作，执行中响应超时/取消，执行后检查结果，并让重试不会轻易重复产生副作用。本例用同一个搜索工具说明这些控制。
 
 | 失败模式 | 运行时处理 | 后续动作 | 代价/边界 |
 | --- | --- | --- | --- |
 | 整个调用缺ID、错类型或多余字段 | `invalid_request`，不执行 | 先修调用封装 | 还没有进入具体工具参数校验 |
+| 宿主身份缺主体、scope集合畸形 | `invalid_identity`，不执行 | 修复可信宿主的身份注入 | 形状正确仍不等于身份已认证 |
 | 参数不符合Schema | `invalid_arguments`，不执行 | 让调用方修参数 | 校验正确不等于业务语义正确 |
 | 身份无scope | `permission_denied`，不执行 | 按真实授权流程处理 | 不能让模型自己补权限 |
 | Handler抛异常 | `execution_error`，隐藏秘密 | 根据错误类别人工或程序处置 | 本例保守不自动重试 |
@@ -41,6 +42,6 @@ if (old) {
 
 ## 怎样验证，先看哪些反例
 
-[测试](../05-code/tool-runtime-typescript/test/runtime.test.ts)包含正确输入、错类型、额外字段、无权限、输出错误、重复并发、冲突ID、超时、取消、异常脱敏、调用对象篡改与启动前取消；[跨语言测试](../05-code/tool-runtime-typescript/test/schemas.test.ts)还校验同一组正反例。真实服务接入后，应继续测连接断开、写成功后响应丢失以及权限撤销。
+[测试](../05-code/tool-runtime-typescript/test/runtime.test.ts)包含正确输入、错类型、额外字段、畸形身份、无权限、输出错误、重复并发、冲突ID、超时、取消、异常脱敏、调用对象篡改与启动前取消；[跨语言测试](../05-code/tool-runtime-typescript/test/schemas.test.ts)还校验同一组正反例。真实服务接入后，应继续测连接断开、写成功后响应丢失以及权限撤销。
 
 运行入口：[工程README](../05-code/tool-runtime-typescript/README.md)。协议输入约束见[工具契约](../01-concepts/01-structured-output-and-tool-contracts.md)，持久恢复见[Runtime与Harness](../../09-runtime-harness-environment/README.md)。

@@ -1,6 +1,6 @@
 # 工具与协议一手来源
 
-> 状态：draft | 核验日期：2026-09-06
+> 状态：draft | 核验日期：2026-09-12
 
 | 来源 | 版本/用途 | 本库验证范围 |
 | --- | --- | --- |
@@ -13,3 +13,7 @@
 | [A2A规范](https://a2a-protocol.org/v0.3.0/specification/) | 配套教学端点固定0.3.0 | 两个本地HTTP端点的文本/JSON-RPC子集；未声称完整一致性 |
 | [A2A任务生命周期](https://a2a-protocol.org/latest/topics/life-of-a-task/) | 持续更新文档 | 恢复与产物版本问题 |
 | [RFC 8693](https://www.rfc-editor.org/rfc/rfc8693) | OAuth令牌交换标准 | 委托概念，不要求所有系统强制采用 |
+
+2026-09-12 复核确认：MCP 2026-07-28 变更页仍将上一版列为 2025-11-25，并明确新版本移除协议级会话与初始化握手、增加 `server/discover`；Agent Skills 规范仍要求目录至少包含带 `name`/`description` frontmatter 的 `SKILL.md`，`allowed-tools` 仍标为实验字段。可运行代码继续固定旧 SDK，未将文档核验误写成新协议兼容测试。
+
+依赖安全检查同日发现 `ajv@8.17.1` 命中 [GHSA-2g4f-4pwh-qvx6](https://github.com/advisories/GHSA-2g4f-4pwh-qvx6)；参考 Runtime 已升级到 8.20.0，`npm audit` 返回 0 个已知漏洞。该检查只覆盖锁文件在核验时的公告结果，不是长期安全保证。

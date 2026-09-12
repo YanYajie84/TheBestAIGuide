@@ -14,11 +14,20 @@ function canonical(value: unknown): string {
   return JSON.stringify(value);
 }
 
+function copyIdentity(value: unknown): Identity | undefined {
+  if (value === null || typeof value !== "object") return undefined;
+  const subject = "subject" in value ? value.subject : undefined;
+  const scopes = "scopes" in value ? value.scopes : undefined;
+  if (typeof subject !== "string" || subject.length === 0 || !(scopes instanceof Set)) return undefined;
+  if ([...scopes].some(scope => typeof scope !== "string" || scope.length === 0)) return undefined;
+  return { subject, scopes: new Set(scopes as Set<string>) };
+}
+
 export class ToolRuntime {
   private readonly calls = new Map<string, { signature: string; promise: Promise<ToolResult> }>();
   constructor(private readonly registry: Registry) {}
 
-  async execute(request: unknown, identity: Identity, timeoutMs = 1000, signal?: AbortSignal): Promise<ToolResult> {
+  async execute(request: unknown, identity: unknown, timeoutMs = 1000, signal?: AbortSignal): Promise<ToolResult> {
     // A malformed request has no trustworthy correlation ID and never enters the cache.
     const suppliedId = request && typeof request === "object" && "call_id" in request ? request.call_id : undefined;
     const requestId = typeof suppliedId === "string" && suppliedId.length > 0 ? suppliedId : "invalid-request";
@@ -26,19 +35,19 @@ export class ToolRuntime {
     if (!validateCall(request)) return fail("invalid_request");
     let call: ToolCall;
     try { call = structuredClone(request); } catch { return fail("invalid_request"); }
-    identity = { subject: identity.subject, scopes: new Set(identity.scopes) };
-    if (!call.call_id || !identity.subject || !Number.isFinite(timeoutMs) || timeoutMs <= 0) return fail("invalid_request");
+    const verifiedIdentity = copyIdentity(identity);
+    if (!call.call_id || !verifiedIdentity || !Number.isFinite(timeoutMs) || timeoutMs <= 0) return fail(verifiedIdentity ? "invalid_request" : "invalid_identity");
     const tool = this.registry.get(call.name);
     if (!tool) return fail("unknown_tool");
     // Authorization is checked even when this call ID has a cached result.
-    if (!identity.scopes.has(tool.scope)) return fail("permission_denied");
+    if (!verifiedIdentity.scopes.has(tool.scope)) return fail("permission_denied");
     if (!tool.validateInput(call.arguments)) return fail("invalid_arguments");
     if (signal?.aborted) return fail("cancelled");
-    const key = JSON.stringify([identity.subject, call.call_id]);
+    const key = JSON.stringify([verifiedIdentity.subject, call.call_id]);
     const signature = canonical([call.name, call.arguments]);
     const old = this.calls.get(key);
     if (old) return old.signature === signature ? structuredClone(await old.promise) : fail("idempotency_conflict");
-    const promise = this.invoke(call, identity, timeoutMs, signal);
+    const promise = this.invoke(call, verifiedIdentity, timeoutMs, signal);
     this.calls.set(key, { signature, promise });
     // JSON-like output is cloned: caller mutation cannot poison the cache.
     return structuredClone(await promise);

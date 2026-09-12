@@ -1,6 +1,6 @@
 # Skills 与渐进披露：需要时再加载执行知识
 
-> 状态：draft | 来源核验：2026-09-06；Agent Skills规范为持续更新文档
+> 状态：draft | 来源核验：2026-09-12；Agent Skills规范为持续更新文档
 
 “搜索文档”是一个工具，“按照证据整理一份技术比较”是一套工作方法。Skill把这套方法及其脚本、模板和参考资料放在一起，供Agent在合适任务中加载。它主要改变模型能看到的执行知识，不会自动给模型增加文件访问权限，也不是重新训练权重。
 
@@ -14,7 +14,7 @@
 | 主说明 | 步骤、约束、输入输出、失败处理 | 判定适用后 | 说明太薄，模型需猜流程；太长，挤占任务空间 |
 | 附属资源 | 脚本、模板、详细参考 | 当前步骤实际需要时 | 全量读入浪费上下文；只列路径不说明用途又难找到 |
 
-Agent Skills格式使用包含 `SKILL.md` 的目录，文件的frontmatter（Markdown 正文前的 YAML 元数据）至少包括名称与描述。下面是最小格式；仓库另有[完整教学包](../../../20-Projects/learning-workbench/skills/evidence-comparison/SKILL.md)，但文件存在不代表宿主已自动发现或安装它：
+Agent Skills格式使用包含 `SKILL.md` 的目录，文件的frontmatter（Markdown 正文前的 YAML 元数据）至少包括名称与描述；名称还必须与父目录名一致。`allowed-tools` 当前仍是实验字段，不能假设每个宿主都支持。下面是最小格式；仓库另有[完整教学包](../../../20-Projects/learning-workbench/skills/evidence-comparison/SKILL.md)，但文件存在不代表宿主已自动发现或安装它：
 
 ```yaml
 ---
